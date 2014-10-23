@@ -1,6 +1,8 @@
 <html>
 <head>
 <script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/cryptojs/rollups/md5.js"></script>
+
 <script src="js/flickr-api.js"></script>
 <script type="text/javascript">
 
@@ -20,7 +22,7 @@
 
   $(document).ready(
     function () {
-      var frob = getUrlParameter(frob);
+      var frob = getUrlParameter('frob');
       console.log("frob : " + frob);
       getToken( frob );
     }
