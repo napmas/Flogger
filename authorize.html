@@ -20,7 +20,9 @@
 
   $(document).ready(
     function () {
-      console.log(  getUrlParameter('frob') );
+      var frob = getUrlParameter(frob);
+      console.log("frob : " + frob);
+      getToken( frob );
     }
   );
 </script>

@@ -63,6 +63,28 @@ function getToken() {
   });
 }
 
+function getToken( frob ){
+  var method = 'flickr.auth.getToken';
+  var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'frob'+frob+'method'+ method
+  console.log("api_sig: " + api_sig);
+  
+  $.ajax({
+    url: 'https://api.flickr.com/services/rest/',        
+    method: 'GET',
+    data: {
+      method: method,
+      api_key: api_key,
+      frob: frob,
+      format: 'json',
+      nojsoncallback: 1,
+      api_sig: api_sig
+    }
+   }).done ( function (data) {
+    console.log("return data");
+    console.log(data)
+   }); 
+}
+
 function getLoginURL(){
   /* https://www.flickr.com/services/api/auth.howto.web.html */
   var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'perms'+perms);
