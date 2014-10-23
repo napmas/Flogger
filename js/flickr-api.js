@@ -65,7 +65,7 @@ function getToken() {
 
 function getToken( frob ){
   var method = 'flickr.auth.getToken';
-  var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'frob'+frob+'method'+ method
+  var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'frob'+frob+'method'+ method);
   console.log("api_sig: " + api_sig);
   
   $.ajax({
