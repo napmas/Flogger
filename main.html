@@ -27,6 +27,7 @@
       //console.log(CryptoJS.MD5('000005fab4534d05api_key9a0554259914a86fb9e7eb014e4e5d52permswrite').toString());
       console.log(getLoginURL());
       //getToken();
+      $("#div_login").html("<a href='"+getLoginURL() + "'>Login</a>")
     }      
   );
 </script>
@@ -44,5 +45,7 @@
     <input type="password" class="col-md-2 col-md-offset-5" id="inputPassword" placeholder="Password">
   </div>
   </form>
+  <div id="div_login">
+  </div>
 </body>
 </html>

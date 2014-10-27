@@ -2,6 +2,7 @@ var api_key = "af33513bef273cdbafef51ba4d2eaa12";
 var secret = "435337766893fbf5";
 var perms = 'read';
 var flickr_api_url = "https://api.flickr.com/services/rest/?method="
+var user;
 
 function getToken() {
   var oauth = OAuth({
@@ -65,29 +66,49 @@ function getToken() {
 
 function getToken( frob ){
   var method = 'flickr.auth.getToken';
-  var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'frob'+frob+'method'+ method);
-  console.log("api_sig: " + api_sig);
+  console.log("2frob : " + frob );
+  console.log(secret+'api_key'+api_key+'frob'+frob+'method'+ method);
   
-  $.ajax({
-    url: 'https://api.flickr.com/services/rest/',        
-    method: 'GET',
-    data: {
+  var api_sig = CryptoJS.MD5(secret+
+    'api_key'+api_key+
+    'formatjson'+
+    'frob'+frob+
+    'method'+method + 
+    'nojsoncallback1').toString();
+  console.log("api_sig: " + api_sig);
+  var request_data = {
       method: method,
       api_key: api_key,
       frob: frob,
       format: 'json',
       nojsoncallback: 1,
       api_sig: api_sig
-    }
+  };
+  //console.log('https://api.flickr.com/services/rest/?api_key='+api_key +'&method='+method+'&frob='+frob+'&format=json&nojsoncallback=1&api_sig='+api_sig);
+  //console.log( request_data );
+  
+  $.ajax({
+    url: 'https://api.flickr.com/services/rest/?api_key='+api_key+'&method='+method+'&frob='+frob+'&format=json&nojsoncallback=1&api_sig='+api_sig,        
+    method: 'GET',
+    data: request_data
    }).done ( function (data) {
-    console.log("return data");
-    console.log(data)
+    //console.log("return data");
+    console.log(data);
+    if (data.stat == "ok") {
+      // get album list
+      user = data.auth.user;
+      console.log("user");
+      console.log( user );
+    } else {
+      console.log("Authorized Fail!");
+    }
    }); 
+   
 }
 
 function getLoginURL(){
   /* https://www.flickr.com/services/api/auth.howto.web.html */
-  var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'perms'+perms);
+  var api_sig = CryptoJS.MD5(secret+'api_key'+api_key+'perms'+perms).toString();
   
   return 'http://flickr.com/services/auth/?api_key='+api_key+'&perms='+perms+'&api_sig='+api_sig;
 }
