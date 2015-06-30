@@ -1,8 +1,17 @@
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- customize css -->
+<link href="css/customize.css" rel="stylesheet">
+
 <script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script src="js/cryptojs/rollups/md5.js"></script>
 
+<script src="js/img.js"></script>
 <script src="js/flickr-api.js"></script>
 <script type="text/javascript">
 
@@ -23,14 +32,124 @@
   $(document).ready(
     function () {
       var frob = getUrlParameter('frob');
-      console.log("frob : " + frob);
-      getToken( frob );
+
+      // test web storage
+      if ( typeof (Storage) != undefined ) {
+       if ( localStorage.flogger_nsid == undefined ) {
+         if ( frob == undefined ) {
+           //redirect to login
+           window.location.href = getLoginURL();
+         } else {
+           var d = getToken( frob );
+
+           d.done( function () {
+             //console.log( ' get token done ' );
+             $("#div_userinfo").html("<h3> hi, " + localStorage.flogger_username );
+             
+             getAlbumList( localStorage.flogger_nsid );
+           });
+         }
+       } else {
+           $("#div_userinfo").html("<h3> hi, " + localStorage.flogger_username );
+           getAlbumList( localStorage.flogger_nsid );
+       }
+
+      } else {
+        alert (' Ur browser need support HTML5' );
+      }
+
+      // set the html template string
+      $("#text-html-template").html( default_template_str );
     }
   );
 </script>
 
 </head>
 <body>
-Authorized!
+
+  <div class="container">
+    <div class="header">
+        <div id="div_userinfo" class="pull-right">
+        </div> <!-- end of idv userinfo -->
+      <h3 class="text-muted">Flogger</h3>
+    </div> <!-- end of div header -->
+
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active"><a href="#photos" role="tab" data-toggle="tab">Photos</a></li>
+      <li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+      <li><a href="#changes" role="tab" data-toggle="tab">Changes</a></li>
+    </ul>
+
+    <br />
+    <div class="tab-content">
+      <div class="tab-pane active" id="photos">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-md-2 control-label">Pick album</label>
+            <div class="col-md-6">
+              <select class="form-control" id="sel-album-list">
+                <option value=""></option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <button id="btn-get-photo" class="btn btn-default" onClick="getPhotosInAlbum( 1 );" data-loading-text="loading...">
+                Get photo
+              </button>
+            </div>
+          </div>
+          <div class="form-group" id="div-html-result" style="display:none">
+            <label class="col-md-2 control-label"> HTML Result</label>
+            <div class="col-md-6">
+              <textarea class="form-control" id="text-html-result" rows="1" cols="100"></textarea>
+            </div>
+  
+            <div class="col-md-4">
+              <button class="btn btn-default" onClick="getHTML();">Get HTML</button>
+              <button class="btn btn-default" onClick="copytoClipboard();">Copy</button>
+              <button class="btn btn-default" onClick="">Post</button>
+            </div>
+          </div>
+        </div>
+   
+        <!-- pagination -->
+        <div class="row" id="div-pagination" style="display:none;">
+          <ul class="pagination pagination-sm col-md-10" id="pagination-top"></ul>
+          <div class="col-md-2" style="padding-top:30px;">
+             <a href="#">U Picked : </a><span class="badge" id="span-picked-photo"> 0 </span>
+          </div>
+        </div>
+        <div class="" id="div-photo-container">
+        </div>
+      </div> <!-- end of tab-pane: photo-->
+
+      <div class="tab-pane" id="settings">
+        <div class="row">
+          <div class="col-md-4"> HTML template : 
+          </div>
+          <div class="col-md-8">
+            <textarea id="text-html-template" cols="60" rows="10"></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            photo per page : 
+          </div>
+          <div class="col-md-8">
+            <select id="sel-photo-per-page">
+              <option value="48">48</option>
+              <option value="96" selected>96</option>
+              <option value="144">144</option>
+            </select>
+          </div>
+        </div>
+        <div id="div-html-template-container" class="sr-only"></div>
+      </div>
+
+      <div class="tab-pane" id="changes">
+        Changes goes here
+      </div>
+      
+    </div> <!-- end of tab content -->
+  </div> <!-- end of div container -->
 </body>
 </html>
